@@ -21,7 +21,6 @@ public class Test_Cases {
                 .assertThat().body("data",not(empty()))
                 .assertThat().body("data.id",hasSize(6)).log().body();
     }
-
     @Test
     public void GetsingleUser(){
 
@@ -82,9 +81,7 @@ public class Test_Cases {
         .post("/api/users")
   .then().log().all()
           .assertThat().statusCode(201);
-
 }
-
     @Test
     public void UpdateUsers(){
          Response res= given()
@@ -123,7 +120,6 @@ public class Test_Cases {
                   .post("/api/register")
          .then().extract().response();
                   System.out.println(res.asString());
-
 }
 
 @Test
@@ -184,9 +180,5 @@ public class Test_Cases {
             .body("data.last_name",hasItem("Bluth"))
             .body("data.avatar",hasItem("https://reqres.in/img/faces/1-image.jpg")).log().body();
 
-
-
-
 }
-
 }
