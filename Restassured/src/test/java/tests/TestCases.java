@@ -1,5 +1,7 @@
 package tests;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -7,10 +9,19 @@ import static org.hamcrest.Matchers.hasItem;
 
 public class TestCases {
 
+    RequestSpecification request;
+    @BeforeClass
+    public void beforeClass(){
+        request=given()
+                .baseUri("https://reqres.in")
+                .log().all();
+    }
+
     @Test
     public void test() {
-        given().baseUri("https://reqres.in/").
-                when().get("/api/users?page=2").
+        given()
+                .spec(request)
+                .when().get("/api/users?page=2").
                 then().log().all()
                 .assertThat().statusCode(200)
                 .assertThat().body("page",equalTo(2))
@@ -29,7 +40,7 @@ public class TestCases {
 
         Response res=
                 given()
-                        .baseUri("https://reqres.in/")
+                        .spec(request)
                         .when()
                         .get("/api/users/2")
                         .then()
@@ -43,7 +54,7 @@ public class TestCases {
     @Test
     public void SingleUserNotFound(){
         given()
-                .baseUri("https://reqres.in")
+                .spec(request)
                 .when()
                 .get("/api/users/23")
                 .then()
@@ -52,7 +63,8 @@ public class TestCases {
     @Test
     public void ListResource(){
         given()
-                .baseUri("https://reqres.in")
+                .spec(request)
+                .log().all()
                 .when()
                 .get("/api/unknown")
                 .then()
@@ -65,7 +77,7 @@ public class TestCases {
     @Test
     public void GetSingleResource(){
         given()
-                .baseUri("https://reqres.in")
+                .spec(request)
                 .when()
                 .get("/api/unknown/2")
                 .then()
@@ -75,7 +87,7 @@ public class TestCases {
     @Test
     public void CreateUsers(){
         given()
-                .baseUri("https://reqres.in")
+                .spec(request)
                 .body("{ \n" +
                         "    \"name\": \"morpheus\",\n" +
                         "    \"job\": \"leader\"\n" +
@@ -88,7 +100,7 @@ public class TestCases {
     @Test
     public void UpdateUsers(){
         Response res= given()
-                .baseUri("https://reqres.in")
+                .spec(request)
                 .body("{\n" +
                         "    \"name\": \"morpheus\",\n" +
                         "    \"job\": \"zion resident\"\n" +
@@ -103,7 +115,7 @@ public class TestCases {
     @Test
     public void Deleteuser(){
         given()
-                .baseUri("https://reqres.in")
+                .spec(request)
                 .when()
                 .delete("/api/users/2")
                 .then()
@@ -113,7 +125,7 @@ public class TestCases {
     @Test
     public void RegisterSuccessful(){
         Response res =given()
-                .baseUri("https://reqres.in")
+                .spec(request)
                 .header("Content-Type","application/json")
                 .body("{\n" +
                         "    \"email\": \"eve.holt@reqres.in\",\n" +
@@ -128,8 +140,9 @@ public class TestCases {
     @Test
     public void registerUnSuccesful(){
         given()
+
                 .header("Content-Type","application/json")
-                .baseUri("https://reqres.in")
+                .spec(request)
                 .body("{\n" +
                         "    \"email\": \"sydney@fife\"\n" +
                         "}")
@@ -142,7 +155,7 @@ public class TestCases {
     @Test
     public void LoginSuccessful(){
         given()
-                .baseUri("https://reqres.in")
+                .spec(request)
                 .header("Content-Type","application/json")
                 .body("{\n" +
                         "    \"email\": \"eve.holt@reqres.in\",\n" +
@@ -156,7 +169,7 @@ public class TestCases {
     @Test
     public void LoginUnSuccessful(){
         given()
-                .baseUri("https://reqres.in")
+                .spec(request)
                 .header("Content-Type","application/json")
                 .body("{\n" +
                         "    \"email\": \"peter@klaven\"\n" +
@@ -171,7 +184,7 @@ public class TestCases {
     @Test
     public void DelayedResponce(){
         given()
-                .baseUri("https://reqres.in")
+                .spec(request)
                 .when()
                 .get("/api/users?delay=3")
                 .then()
